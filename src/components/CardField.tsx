@@ -37,10 +37,14 @@ export function CardField({
 }: CardFieldProps) {
   const { t } = useI18n()
   // ללא כרטיסים שמורים אין מה לפתוח; כרטיס של רשומה ישנה שאינו ברשימה
-  // נשאר ניתן לעריכה במקום להיעלם.
+  // נשאר ניתן לעריכה במקום להיעלם. גם ערך ריק נכנס להקלדה: select עם
+  // value שאינו קיים באופציות מציג את הראשונה ומסתיר ערך ריק שנדחה בוולידציה.
   const [addingCard, setAddingCard] = useState(
-    () => knownCards.length === 0 || (value !== '' && !knownCards.includes(value)),
+    () => knownCards.length === 0 || !knownCards.includes(value),
   )
+  // המיקוד נכנס רק כשהמשתמש בחר "כרטיס חדש"; בטעינה רגילה הוא היה חוטף
+  // את המיקוד ופותח את המקלדת על שדה הכרטיס בלי שביקשו.
+  const [focusNewCard, setFocusNewCard] = useState(false)
 
   const invalidClass = invalid ? 'field-input-invalid' : ''
   const ariaProps = {
@@ -63,8 +67,9 @@ export function CardField({
           placeholder={t('form.cardLast4Placeholder')}
           value={value}
           disabled={disabled}
-          // המיקוד נכנס לשדה מיד כדי שהמקלדת תיפתח בלי לחיצה נוספת.
-          autoFocus={knownCards.length > 0}
+          // אחרי בחירת "כרטיס חדש" המיקוד נכנס לשדה מיד, כדי שהמקלדת
+          // תיפתח בלי לחיצה נוספת.
+          autoFocus={focusNewCard}
           {...ariaProps}
           onFocus={onFocus}
           onChange={(event) =>
@@ -78,6 +83,7 @@ export function CardField({
             disabled={disabled}
             onClick={() => {
               setAddingCard(false)
+              setFocusNewCard(false)
               onChange(knownCards[0])
             }}
           >
@@ -100,6 +106,7 @@ export function CardField({
         if (event.target.value === NEW_CARD) {
           // מרוקנים את הערך כדי שהוולידציה תדרוש ארבע ספרות חדשות.
           setAddingCard(true)
+          setFocusNewCard(true)
           onChange('')
           return
         }

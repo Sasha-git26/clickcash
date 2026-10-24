@@ -73,7 +73,8 @@ export function EditExpenseSheet({
     event.preventDefault()
     if (saveLock.current) return
 
-    const result = validateExpenseForm(values)
+    // שדה התאריך גלוי כאן, ולכן ריקונו הוא שגיאה ולא חתימה מחדש על "עכשיו".
+    const result = validateExpenseForm(values, { dateTimeRequired: true })
     if (!result.ok) {
       setErrors(result.errors)
       return

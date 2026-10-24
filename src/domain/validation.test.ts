@@ -5,7 +5,7 @@ import { makeFormValues } from '../test/factories'
 describe('validateExpenseForm', () => {
   it('מקבל הוצאה תקינה במזומן וחותם את השעה הנוכחית', () => {
     const now = new Date(2026, 9, 23, 14, 5, 0)
-    const result = validateExpenseForm(makeFormValues(), now)
+    const result = validateExpenseForm(makeFormValues(), { now })
 
     expect(result.ok).toBe(true)
     if (!result.ok) return
@@ -109,6 +109,15 @@ describe('validateExpenseForm', () => {
     expect(result.ok).toBe(false)
     if (result.ok) return
     expect(result.errors.dateTime).toBe('dateTimeInvalid')
+  })
+
+  it('פוסל תאריך ריק כשהשדה גלוי, במקום לחתום מחדש על עכשיו', () => {
+    const result = validateExpenseForm(makeFormValues({ dateTime: '' }), {
+      dateTimeRequired: true,
+    })
+    expect(result.ok).toBe(false)
+    if (result.ok) return
+    expect(result.errors.dateTime).toBe('dateTimeRequired')
   })
 })
 
