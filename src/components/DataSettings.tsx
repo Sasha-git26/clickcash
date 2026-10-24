@@ -6,6 +6,7 @@ import {
   buildCsv,
   downloadTextFile,
   parseBackup,
+  type ParsedBackup,
 } from '../domain/backup'
 import { LANGUAGES, LANGUAGE_META, type Language } from '../i18n/strings'
 import { useI18n } from '../i18n/I18nProvider'
@@ -21,7 +22,9 @@ interface DataSettingsProps {
 export function DataSettings({ expenses, onRestore, onNotify }: DataSettingsProps) {
   const { t, language, setLanguage } = useI18n()
   const fileInput = useRef<HTMLInputElement>(null)
-  const [pendingRestore, setPendingRestore] = useState<Expense[] | null>(null)
+  // נשמר הפירוק המלא ולא רק ההוצאות: מספר הרשומות שנפסלו מדווח למשתמש
+  // אחרי השחזור, שכבר מחק את הנתונים הקודמים.
+  const [pendingRestore, setPendingRestore] = useState<ParsedBackup | null>(null)
   const [exporting, setExporting] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -52,7 +55,7 @@ export function DataSettings({ expenses, onRestore, onNotify }: DataSettingsProp
         onNotify(t('errors.restoreFailed'), 'error')
         return
       }
-      setPendingRestore(parsed.expenses)
+      setPendingRestore(parsed)
     } catch {
       onNotify(t('errors.restoreFailed'), 'error')
     }
@@ -60,11 +63,15 @@ export function DataSettings({ expenses, onRestore, onNotify }: DataSettingsProp
 
   async function confirmRestore() {
     if (!pendingRestore) return
-    const restored = pendingRestore
+    const { expenses: restored, skipped } = pendingRestore
     setPendingRestore(null)
     try {
       await onRestore(restored)
-      onNotify(t('toast.restored', { count: restored.length }))
+      onNotify(
+        skipped > 0
+          ? t('toast.restoredPartial', { count: restored.length, skipped })
+          : t('toast.restored', { count: restored.length }),
+      )
     } catch {
       onNotify(t('errors.restoreFailed'), 'error')
     }
@@ -156,7 +163,7 @@ export function DataSettings({ expenses, onRestore, onNotify }: DataSettingsProp
           title={t('settings.restoreConfirmTitle')}
           body={t('settings.restoreConfirmBody', {
             current: expenses.length,
-            incoming: pendingRestore.length,
+            incoming: pendingRestore.expenses.length,
           })}
           confirmLabel={t('settings.restoreConfirmAction')}
           cancelLabel={t('confirm.cancel')}

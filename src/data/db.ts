@@ -39,6 +39,12 @@ export function getDb(): Promise<IDBPDatabase<HotzaotDB>> {
         // ברשומות ישנות הטקסט היחיד שהוזן הוא למעשה שם המקום, ולכן הוא מועבר לשם.
         if (oldVersion >= 1 && oldVersion < 2) {
           const store = tx.objectStore(EXPENSES_STORE)
+          // merchant נולד ב-v2, ולכן מסד שכבר היה ב-v1 מגיע לכאן בלי האינדקס
+          // שהסכמה מצהירה עליו. בלי השורה הזו התקנה מעודכנת והתקנה חדשה
+          // מגיעות לאותה DB_VERSION עם אינדקסים שונים.
+          if (!store.indexNames.contains('by-merchant')) {
+            store.createIndex('by-merchant', 'merchant')
+          }
           for await (const cursor of store) {
             const expense = cursor.value as Expense & { description?: string }
             if (expense.merchant) continue

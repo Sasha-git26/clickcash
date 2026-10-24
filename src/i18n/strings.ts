@@ -45,6 +45,7 @@ const he = {
   'errors.cardLast4Invalid': 'יש להזין 4 ספרות אחרונות של הכרטיס',
   'errors.installmentsOutOfRange': 'מספר תשלומים חייב להיות בין 1 ל-36',
   'errors.dateTimeInvalid': 'תאריך או שעה לא תקינים',
+  'errors.dateTimeRequired': 'יש להזין תאריך ושעה',
   'errors.saveFailed': 'השמירה נכשלה. נסה שוב.',
   'errors.loadFailed': 'טעינת הנתונים נכשלה.',
   'errors.restoreFailed': 'שחזור הקובץ נכשל — ייתכן שהקובץ אינו תקין.',
@@ -53,6 +54,7 @@ const he = {
   'toast.updated': 'ההוצאה עודכנה',
   'toast.deleted': 'ההוצאה נמחקה',
   'toast.restored': 'שוחזרו {count} הוצאות',
+  'toast.restoredPartial': 'שוחזרו {count} הוצאות; {skipped} רשומות לא תקינות דולגו',
   'toast.exported': 'הקובץ נוצר',
 
   'list.title': 'הוצאות אחרונות',
@@ -163,6 +165,7 @@ const en: Record<StringKey, string> = {
   'errors.cardLast4Invalid': 'Enter the card’s last 4 digits',
   'errors.installmentsOutOfRange': 'Installments must be between 1 and 36',
   'errors.dateTimeInvalid': 'Invalid date or time',
+  'errors.dateTimeRequired': 'Enter a date and time',
   'errors.saveFailed': 'Saving failed. Please try again.',
   'errors.loadFailed': 'Could not load your data.',
   'errors.restoreFailed': 'Restore failed — the file may be invalid.',
@@ -171,6 +174,7 @@ const en: Record<StringKey, string> = {
   'toast.updated': 'Expense updated',
   'toast.deleted': 'Expense deleted',
   'toast.restored': 'Restored {count} expenses',
+  'toast.restoredPartial': 'Restored {count} expenses; skipped {skipped} invalid records',
   'toast.exported': 'File created',
 
   'list.title': 'Recent expenses',

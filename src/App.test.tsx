@@ -115,6 +115,24 @@ describe('App', () => {
     expect(within(expenseList()).getByText(/18\.00/)).toBeInTheDocument()
   })
 
+  it('לא מזיז הוצאה לעכשיו כששדה התאריך רוקן בעריכה', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await waitFor(() => expect(screen.getByText(he['list.empty'])).toBeInTheDocument())
+    await addExpense(user, '10', 'ארומה')
+
+    await user.click(screen.getByRole('button', { name: he['list.edit'] }))
+    const sheet = screen.getByRole('dialog', { name: he['edit.title'] })
+    await user.clear(within(sheet).getByLabelText(he['form.dateTime']))
+    await user.click(within(sheet).getByRole('button', { name: he['form.save'] }))
+
+    expect(await within(sheet).findByText(he['errors.dateTimeRequired'])).toBeInTheDocument()
+    // החלון נשאר פתוח: ההוצאה לא נשמרה עם חותמת זמן חדשה.
+    expect(screen.getByRole('dialog', { name: he['edit.title'] })).toBeInTheDocument()
+    expect(screen.queryByText(he['toast.updated'])).not.toBeInTheDocument()
+  })
+
   it('מוחק הוצאה רק לאחר אישור', async () => {
     const user = userEvent.setup()
     render(<App />)

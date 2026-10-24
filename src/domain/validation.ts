@@ -33,12 +33,23 @@ export type ValidationErrorCode =
   | 'cardLast4Invalid'
   | 'installmentsOutOfRange'
   | 'dateTimeInvalid'
+  | 'dateTimeRequired'
 
 export type ValidationErrors = Partial<Record<ExpenseFieldError, ValidationErrorCode>>
 
 export type ValidationResult =
   | { ok: true; value: ExpenseInput }
   | { ok: false; errors: ValidationErrors }
+
+export interface ValidateOptions {
+  /** הזמן שנחתם כשהשדה ריק; נתון לבדיקות. */
+  now?: Date
+  /**
+   * מסך העריכה מציג שדה תאריך שניתן לרוקן, ושם ריק הוא שגיאה:
+   * בלי זה ריקון השדה היה מזיז הוצאה ישנה לעכשיו בלי שהמשתמש ביקש.
+   */
+  dateTimeRequired?: boolean
+}
 
 /**
  * מאמת את ערכי הטופס וממיר אותם ל-ExpenseInput.
@@ -47,10 +58,14 @@ export type ValidationResult =
  * כך שהחלפה לאשראי וחזרה למזומן לא משאירה שאריות.
  *
  * `values.dateTime` הוא בפורמט של <input type="datetime-local">.
- * מחרוזת ריקה משמעותה "עכשיו" — כך טופס ההוספה חותם אוטומטית
- * את תאריך ושעת ההוצאה לפי השעון המקומי.
+ * בטופס ההוספה, שבו השדה אינו מוצג, מחרוזת ריקה משמעותה "עכשיו" —
+ * כך ההוצאה נחתמת אוטומטית לפי השעון המקומי.
  */
-export function validateExpenseForm(values: ExpenseFormValues, now: Date = new Date()): ValidationResult {
+export function validateExpenseForm(
+  values: ExpenseFormValues,
+  options: ValidateOptions = {},
+): ValidationResult {
+  const { now = new Date(), dateTimeRequired = false } = options
   const errors: ValidationErrors = {}
 
   if (values.amount.trim() === '') {
@@ -88,11 +103,14 @@ export function validateExpenseForm(values: ExpenseFormValues, now: Date = new D
     }
   }
 
-  const dateTime =
-    values.dateTime.trim() === ''
-      ? toLocalIsoString(now)
-      : fromDateTimeLocalValue(values.dateTime)
-  if (dateTime === null) errors.dateTime = 'dateTimeInvalid'
+  let dateTime: string | null
+  if (values.dateTime.trim() === '') {
+    dateTime = dateTimeRequired ? null : toLocalIsoString(now)
+    if (dateTime === null) errors.dateTime = 'dateTimeRequired'
+  } else {
+    dateTime = fromDateTimeLocalValue(values.dateTime)
+    if (dateTime === null) errors.dateTime = 'dateTimeInvalid'
+  }
 
   if (Object.keys(errors).length > 0) return { ok: false, errors }
 
