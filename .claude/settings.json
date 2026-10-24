@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npx tsc -b 2>&1)",
+      "PowerShell(npx vitest run --reporter=dot 2>&1)",
+      "PowerShell(npx vitest run src/App.test.tsx --reporter=dot 2>&1)",
+      "PowerShell(npx pwa-assets-generator 2>&1)",
+      "PowerShell(npm run build 2>&1)",
+      "PowerShell(npm run preview -- --port 4173 2>&1)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__resize_page",
+      "PowerShell(npx --yes vercel@latest whoami 2>&1)",
+      "PowerShell(npx --yes vercel@latest --prod --yes 2>&1)",
+      "PowerShell(npx --yes vercel@latest link --yes --project clickcash 2>&1)",
+      "Bash(npx tsc *)",
+      "Bash(npx vitest *)",
+      "Bash(npm run *)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_evaluate",
+      "Bash(npx vercel *)",
+      "Bash(curl -s https://clickcash-beta.vercel.app/)",
+      "Bash(echo \"=== TSC EXIT: $? ===\")",
+      "PowerShell(git -C \"d:\\\\Users\\\\Alex\\\\Courses\\\\Claude\\\\ClickCash\" rev-parse --is-inside-work-tree)",
+      "PowerShell(git config --global user.name)",
+      "PowerShell(git config --global user.email)"
+    ]
+  }
+}

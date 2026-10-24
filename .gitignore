@@ -1,0 +1,25 @@
+node_modules
+dist
+dist-ssr
+.vercel
+
+# Vite / TypeScript
+*.local
+*.tsbuildinfo
+
+# Tooling output
+.playwright-mcp
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+.vercel
+.env*

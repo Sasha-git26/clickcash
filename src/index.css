@@ -1,0 +1,135 @@
+@import 'tailwindcss';
+
+/*
+ * צבעים מוגדרים כמשתני CSS ונדרסים ב-prefers-color-scheme,
+ * כך שמצב כהה עובד לפי הגדרת המכשיר בלי מחליף ידני ובלי כפל מחלקות.
+ */
+:root {
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --brand: #0f766e;
+  --brand-fg: #ffffff;
+  --brand-soft: #ccfbf1;
+  --brand-soft-fg: #115e56;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1220;
+    --surface: #121a2b;
+    --surface-muted: #162034;
+    --border: #263349;
+    --text: #e8eef7;
+    --text-muted: #94a3b8;
+    --brand: #2dd4bf;
+    --brand-fg: #06211f;
+    --brand-soft: #10302e;
+    --brand-soft-fg: #99f6e4;
+    --danger: #fca5a5;
+    --danger-soft: #3f1a1a;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-ink-muted: var(--text-muted);
+  --color-brand: var(--brand);
+  --color-brand-fg: var(--brand-fg);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-fg: var(--brand-soft-fg);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', 'Noto Sans Hebrew', 'Arial Hebrew', Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    /* מונע "גלישת גומי" אופקית שמרגישה שבורה באפליקציה במסך מלא. */
+    overscroll-behavior-x: none;
+  }
+
+  /*
+   * 16px הוא המינימום שמונע מסאפארי באייפון לבצע זום אוטומטי בפוקוס על שדה.
+   * כל הקטנה של גופן השדות תשבור את חוויית ההזנה.
+   */
+  input,
+  select,
+  textarea,
+  button {
+    font-family: inherit;
+    font-size: 16px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * מוגדרות כ-@utility (ולא כמחלקות ב-@layer components) כדי שאפשר יהיה
+ * להרכיב אותן זו מזו עם @apply — ב-Tailwind v4 רק utilities ניתנות להחלה כך.
+ */
+@utility field-label {
+  @apply mb-1.5 block text-sm font-medium text-ink-muted;
+}
+
+@utility field-input {
+  @apply w-full rounded-xl border border-line bg-surface px-3.5 py-3 text-ink
+    transition-colors placeholder:text-ink-muted/60 focus:border-brand focus:outline-none;
+}
+
+@utility field-input-invalid {
+  @apply border-danger focus:border-danger;
+}
+
+@utility field-error {
+  @apply mt-1.5 text-sm text-danger;
+}
+
+@utility card {
+  @apply rounded-2xl border border-line bg-surface p-4 shadow-sm;
+}
+
+/* גובה מינימלי של 44px — יעד המגע המומלץ ב-iOS. */
+@utility btn {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 font-medium
+    transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+@utility btn-primary {
+  @apply btn bg-brand text-brand-fg active:brightness-95;
+}
+
+@utility btn-ghost {
+  @apply btn border border-line bg-surface text-ink active:bg-surface-muted;
+}
+
+@utility btn-danger {
+  @apply btn bg-danger-soft text-danger active:brightness-95;
+}
+
+@utility section-title {
+  @apply text-base font-semibold text-ink;
+}
